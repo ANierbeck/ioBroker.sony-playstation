@@ -1,0 +1,161 @@
+<html>
+
+<head>
+
+	<!-- Load ioBroker scripts and styles-->
+	<link rel="stylesheet" type="text/css" href="../../css/adapter.css" />
+	<link rel="stylesheet" type="text/css" href="../../lib/css/materialize.css">
+
+	<script type="text/javascript" src="../../lib/js/jquery-3.2.1.min.js"></script>
+	<script type="text/javascript" src="../../socket.io/socket.io.js"></script>
+
+	<script type="text/javascript" src="../../js/translate.js"></script>
+	<script type="text/javascript" src="../../lib/js/materialize.js"></script>
+	<script type="text/javascript" src="../../js/adapter-settings.js"></script>
+
+	<!-- Load our own files -->
+	<link rel="stylesheet" type="text/css" href="style.css" />
+	<script type="text/javascript" src="words.js"></script>
+
+	<script type="text/javascript">
+		var devices = [];
+		// This will be called by the admin adapter when the settings page loads
+		function load(settings, onChange) {
+			// example: select elements with id=key and class=value and insert value
+			if (!settings) return;
+
+			devices = settings.devices || [];
+			
+			$('.value').each(function () {
+				var $key = $(this);
+				var id = $key.attr('id');
+				if ($key.attr('type') === 'checkbox') {
+					// do not call onChange direct, because onChange could expect some arguments
+					$key.prop('checked', settings[id])
+						.on('change', () => onChange())
+						;
+				} else {
+					// do not call onChange direct, because onChange could expect some arguments
+					$key.val(settings[id])
+						.on('change', () => onChange())
+						.on('keyup', () => onChange())
+						;
+				}
+			});
+
+			$('#table-button-search').on('click', function () {
+				sendTo(null, 'browse', null, function(list) {					
+					var changed = false;
+					for (var j = 0; j < list.length; j++) {
+						var isFound = false;
+						for (var i = 0; i < devices.length; i++) {
+							if (devices[i].ip === list[j].ip) {
+								isFound = true;
+								break;
+							}
+						}
+						if (!isFound) {
+							changed = true;
+							devices.push({
+								name: list[j].name,
+								ip: list[j].ip
+							});
+						}
+					}
+
+					if (changed) {
+						onChange();
+						values2table('values', devices, onChange);
+					}
+				});
+			}).attr('title', _('update adapter information'));
+
+			values2table('values', devices, onChange);
+
+			getIsAdapterAlive(function (isAlive) {
+				if (isAlive || common.enabled) {
+					$('#table-button-search').removeClass('disabled');
+				} else {
+					$('#table-button-search').addClass('disabled');
+				}
+			});
+
+
+			onChange(false);
+			// reinitialize all the Materialize labels on the page if you are dynamically adding inputs:
+			if (M) M.updateTextFields();
+		}
+
+		// This will be called by the admin adapter when the user presses the save button
+		function save(callback) {
+			// example: select elements with class=value and build settings object
+			var obj = {};
+			$('.value').each(function () {
+				var $this = $(this);
+				if ($this.attr('type') === 'checkbox') {
+					obj[$this.attr('id')] = $this.prop('checked');
+				} else if ($this.attr('type') === 'number') {
+					obj[$this.attr('id')] = parseFloat($this.val());
+				} else {
+					obj[$this.attr('id')] = $this.val();
+				}
+			});
+
+			obj.devices = table2values('values');
+
+			callback(obj);
+		}
+	</script>
+
+</head>
+
+<body>
+
+	<div class="m adapter-container">
+
+		<div class="row">
+			<div class="col s12 m4 l2">
+				<img src="sony-playstation.png" class="logo">
+			</div>
+		</div>
+
+		<!-- Put your content here -->
+
+		<!-- For example columns with settings: -->
+		<div class="col s12">
+            <ul class="tabs">
+                <li class="tab col s5"><a href="#tab-main"    class="translate active">Main settings</a></li>
+                <li class="tab col s5"><a href="#tab-devices" class="translate">Devices</a></li>
+            </ul>
+        </div>
+        <div id="tab-main"      class="col s12 page">
+			<div class="row">
+				<div class="col s6 input-field">
+					<input type="text" class="value" id="searchTimeOut" />
+					<label for="searchTimeOut" class="translate">searchTimeOut</label>
+				</div>
+			</div>
+		</div>
+        <div id="tab-devices"      class="col s12 page">
+			<div class="col s12" id="values">
+                <a class="btn-floating waves-effect waves-light blue table-button-add"><i class="material-icons">add</i></a>
+                <a id="table-button-search" class="btn-floating waves-effect waves-light blue disabled"><i class="material-icons">search</i><span class="translate">Search</span></a>
+                <div class="table-values-div">
+                    <table class="table-values" style="width: 100%;">
+                    <thead>
+                    <tr>
+                        <th data-name="_index"   style="width: 40px" class="translate"></th>
+                        <th data-name="name"     style="width: 30%" class="translate">Name</th>
+                        <th data-name="ip"       class="translate">IP Address</th>
+                        <th data-buttons="delete" style="width: 40px"></th>
+                    </tr>
+                    </thead>
+                    </table>
+                </div>
+            </div>
+		</div>
+	</div>
+
+</body>
+
+</html>
