@@ -1,79 +1,86 @@
 {
-	"common": {
-		"name": "sony-playstation",
-		"version": "0.0.1",
-		"news": {
-			"0.0.1": {
-				"en": "initial release",
-				"de": "Erstveröffentlichung",
-				"ru": "Начальная версия",
-				"pt": "lançamento inicial",
-				"nl": "Eerste uitgave",
-				"fr": "Première version",
-				"it": "Versione iniziale",
-				"es": "Versión inicial",
-				"pl": "Pierwsze wydanie",
-				"zh-cn": "首次出版"
-			}
-		},
-		"title": "sony-playstation",
-		"titleLang": {
-			"en": "sony-playstation",
-			"de": "Sony Playstation",
-			"ru": "Sony Playstation",
-			"pt": "sony-playstation",
-			"nl": "Sony Playstation",
-			"fr": "sony-playstation",
-			"it": "Sony-playstation",
-			"es": "sony-playstation",
-			"pl": "Sony Playstation",
-			"zh-cn": "索尼游戏机"
-		},
-		"desc": {
-			"en": "shows status of playstation in the same network",
-			"de": "zeigt den Status der Playstation im selben Netzwerk",
-			"ru": "показывает статус playstation в той же сети",
-			"pt": "mostra o status do playstation na mesma rede",
-			"nl": "toont status van playstation in hetzelfde netwerk",
-			"fr": "affiche l'état de la playstation dans le même réseau",
-			"it": "mostra lo stato della playstation nella stessa rete",
-			"es": "muestra el estado de la playstation en la misma red",
-			"pl": "pokazuje status playstation w tej samej sieci",
-			"zh-cn": "显示同一网络中 playstation 的状态"
-		},
-		"authors": ["Achim Nierbeck <bcanhome@googlemail.com>"],
-		"keywords": ["ioBroker", "template", "Smart Home", "home automation"],
-		"license": "Apache-2.0",
-		"platform": "Javascript/Node.js",
-		"main": "build/main.js",
-		"icon": "sony-playstation.png",
-		"enabled": true,
-		"extIcon": "https://raw.githubusercontent.com/anierbeck/ioBroker.sony-playstation/main/admin/sony-playstation.png",
-		"readme": "https://github.com/anierbeck/ioBroker.sony-playstation/blob/main/README.md",
-		"loglevel": "debug",
-		"messagebox": true,
-		"mode": "daemon",
-		"type": "multimedia",
-		"compact": true,
-		"connectionType": "local",
-		"dataSource": "push",
-		"materialize": true,
-		"dependencies": [
-			{
-				"js-controller": ">=2.0.0",
-				"ps4-waker": "1.10.1"
-			}
-		]
-	},
-	"native": {
-		"searchTimeOut": "42",
-		"devices": [
-			{
-				"name" : "PS4",
-				"ip" : "0.0.0.0"
-			}
-		]
-	},
-	"objects": [],
-	"instanceObjects": []
+    "common": {
+        "name": "sony-playstation",
+        "version": "0.0.1",
+        "news": {
+            "0.0.1": {
+                "en": "initial release",
+                "de": "Erstveröffentlichung",
+                "ru": "Начальная версия",
+                "pt": "lançamento inicial",
+                "nl": "Eerste uitgave",
+                "fr": "Première version",
+                "it": "Versione iniziale",
+                "es": "Versión inicial",
+                "pl": "Pierwsze wydanie",
+                "zh-cn": "首次出版"
+            }
+        },
+        "title": "sony-playstation",
+        "titleLang": {
+            "en": "sony-playstation",
+            "de": "Sony Playstation",
+            "ru": "Sony Playstation",
+            "pt": "sony-playstation",
+            "nl": "Sony Playstation",
+            "fr": "sony-playstation",
+            "it": "Sony-playstation",
+            "es": "sony-playstation",
+            "pl": "Sony Playstation",
+            "zh-cn": "索尼游戏机"
+        },
+        "desc": {
+            "en": "shows status of playstation in the same network",
+            "de": "zeigt den Status der Playstation im selben Netzwerk",
+            "ru": "показывает статус playstation в той же сети",
+            "pt": "mostra o status do playstation na mesma rede",
+            "nl": "toont status van playstation in hetzelfde netwerk",
+            "fr": "affiche l'état de la playstation dans le même réseau",
+            "it": "mostra lo stato della playstation nella stessa rete",
+            "es": "muestra el estado de la playstation en la misma red",
+            "pl": "pokazuje status playstation w tej samej sieci",
+            "zh-cn": "显示同一网络中 playstation 的状态"
+        },
+        "authors": [
+            "Achim Nierbeck <bcanhome@googlemail.com>"
+        ],
+        "keywords": [
+            "ioBroker",
+            "template",
+            "Smart Home",
+            "home automation"
+        ],
+        "license": "Apache-2.0",
+        "platform": "Javascript/Node.js",
+        "main": "build/main.js",
+        "icon": "sony-playstation.png",
+        "enabled": true,
+        "extIcon": "https://raw.githubusercontent.com/anierbeck/ioBroker.sony-playstation/main/admin/sony-playstation.png",
+        "readme": "https://github.com/anierbeck/ioBroker.sony-playstation/blob/main/README.md",
+        "loglevel": "debug",
+        "messagebox": true,
+        "mode": "daemon",
+        "type": "multimedia",
+        "compact": true,
+        "connectionType": "local",
+        "dataSource": "push",
+        "materialize": true,
+        "dependencies": [
+            {
+                "js-controller": ">=2.0.0",
+                "ps4-waker": "1.10.1"
+            }
+        ]
+    },
+    "native": {
+        "searchTimeOut": "42",
+        "devices": [
+            {
+                "name": "PS4",
+                "ip": "0.0.0.0"
+            }
+        ]
+    },
+    "objects": [],
+    "instanceObjects": []
 }
