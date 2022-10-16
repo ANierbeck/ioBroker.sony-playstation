@@ -104,6 +104,25 @@ The ioBroker.admin interface will then be available at http://localhost:8081/
 
 Please refer to the [`dev-server` documentation](https://github.com/ioBroker/dev-server#command-line) for more details.
 
+## manual installation on server
+
+via the console: 
+```
+iobroker add AdapterName
+```
+
+Sollten sich die notwendigen Dateien für den Adapter noch nicht auf dem Host befinden, wird zuerst automatisch ein iobroker install AdapterName ausgeführt. Erst danach wird die Instanz erzeugt.
+
+Über die Konsole per npm (nur für Experten!)
+```
+cd /opt/iobroker
+
+npm install iobroker.AdapterName
+```
+
+very important do the npm install in the iobroker directory
+
+
 ## Changelog
 <!--
 	Placeholder for the next version (at the beginning of the line):
