@@ -7,18 +7,7 @@
 import * as utils from "@iobroker/adapter-core";
 import { throws } from "assert";
 
-// Load your modules here, e.g.:
-// import * as fs from "fs";
-
-// const {Device} = require('ps4-waker');
-//const {Detector} = require('ps4-waker').Detector;
 const ps4waker = require('ps4-waker');
-
-//import * as ps4waker from "ps4-waker";
-
-
-//var ps4: typeof Device;
-//var detector = new Detector();
 
 interface PlaystationDevice {
 	name: string;
@@ -55,44 +44,6 @@ class SonyPlaystation extends utils.Adapter {
 		// The adapters config (in the instance object everything under the attribute "native") is accessible via
 		// this.config:
 		this.log.info("Search Timeout: " + this.config.searchTimeOut);
-
-		/*
-		For every state in the system there has to be also an object of type state
-		Here a simple template for a boolean variable named "testVariable"
-		Because every adapter instance uses its own unique namespace variable names can't collide with other adapters variables
-		*/
-		await this.setObjectNotExistsAsync("testVariable", {
-			type: "state",
-			common: {
-				name: "testVariable",
-				type: "boolean",
-				role: "indicator",
-				read: true,
-				write: true,
-			},
-			native: {},
-		});
-
-		// In order to get state updates, you need to subscribe to them. The following line adds a subscription for our variable we have created above.
-		this.subscribeStates("testVariable");
-		// You can also add a subscription for multiple states. The following line watches all states starting with "lights."
-		// this.subscribeStates("lights.*");
-		// Or, if you really must, you can also watch all states. Don't do this if you don't need to. Otherwise this will cause a lot of unnecessary load on the system:
-		// this.subscribeStates("*");
-
-		/*
-			setState examples
-			you will notice that each setState will cause the stateChange event to fire (because of above subscribeStates cmd)
-		*/
-		// the variable testVariable is set to true as command (ack=false)
-		await this.setStateAsync("testVariable", true);
-
-		// same thing, but the value is flagged "ack"
-		// ack should be always set to true if the value is received from or acknowledged from the target system
-		await this.setStateAsync("testVariable", { val: true, ack: true });
-
-		// same thing, but the state is deleted after 30s (getState will return null afterwards)
-		await this.setStateAsync("testVariable", { val: true, ack: true, expire: 30 });
 
 		// examples for the checkPassword/checkGroup functions
 		let result = await this.checkPasswordAsync("admin", "iobroker");
@@ -193,9 +144,6 @@ class SonyPlaystation extends utils.Adapter {
 
 		let configDevices:PlaystationDevice[] = this.config.devices;
 		
-		/* for (let i = 0; i < devices.length; i++) {
-			
-		} */
 		this.log.debug("retrieved devices: "+JSON.stringify(devices));
 		this.log.debug("configured devices: "+JSON.stringify(configDevices));
 
@@ -322,28 +270,13 @@ class SonyPlaystation extends utils.Adapter {
 
 		this.log.info("Browse function called");
 
-		//const result = [];
-	
 		var deviceOptions = new Map();
 		//deviceOptions.set("debug","true");
 		deviceOptions.set("timeout", this.config.searchTimeOut);
 	
-		// var ps4 = new Device(deviceOptions);
-	
-		// try {
-		// 	let deviceStatus = ps4.getDeviceStatus();
-		// 	this.log.debug("Device Status: "+deviceStatus.Status);
-		// 	this.log.debug(JSON.stringify(deviceStatus, null, 2));
-		// 	for (let i = 0; i < deviceStatus.)
-		// 	result.push(deviceStatus);
-		// } catch (e) {
-		// 	this.log.debug("Failed to search for PS4");
-		// }
-
 		this.log.debug("Calling detector with options: "+deviceOptions);
-		//var discovery = Detector.detect(deviceOptions)
+
 		var detector = new ps4waker.Detector();
-		// var discovery = detector.find(null, deviceOptions);
 
 		//discovery is a promise ... 
 		var discovery = ps4waker.Detector.findAny(deviceOptions, (err:any, device:any, rinfo:any) => {
@@ -414,7 +347,7 @@ class SonyPlaystation extends utils.Adapter {
         }, this.pollAPIInterval);
     }
 
-	    /**
+	/**
      * Checks if a real error was thrown and returns message then, else it stringifies
      *
      * @param error any kind of thrown error
