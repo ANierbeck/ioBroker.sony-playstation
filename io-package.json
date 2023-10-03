@@ -1,11 +1,10 @@
 {
 	"common": {
 		"name": "sony-playstation",
-		"version": "0.0.3",
+		"version": "0.0.4",
 		"news": {
-			"0.0.3": {
-				"en": "values are acknowledged",
-				"de": "Werte werde als 'acknowledged'"
+			"0.0.4": {
+				"en": "switched to non async functions for state change"
 			}
 		},
 		"title": "sony-playstation",

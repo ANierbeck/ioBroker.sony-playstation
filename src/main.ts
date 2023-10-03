@@ -211,41 +211,59 @@ class SonyPlaystation extends utils.Adapter {
 		this.log.debug("Create Device Channel with Name: " + name + " and IP: " + ip);
 		const id = ip.replace(/[.\s]+/g, "_");
 
-		const obj = await this.createDeviceAsync(id);
+		const obj = await this.createDevice(id);
 
 		this.log.debug("Created Channel Obj: " + JSON.stringify(obj));
 
-		await this.createStateAsync(id, "", "state", {
-			type: "string",
-			read: true,
-			write: true,
-			role: "state",
-			name: "Power Status Active",
-		}, true);
+		await this.createState(
+			id,
+			"",
+			"state",
+			{
+				type: "string",
+				read: true,
+				write: true,
+				role: "state",
+				name: "Power Status Active",
+			},
+			true,
+		);
 
-		const nameState = await this.createStateAsync(id, "", "name", {
-			type: "string",
-			read: true,
-			write: true,
-			role: "name",
-			name: "Name of Playstation",
-		}, true);
+		const nameState = await this.createState(
+			id,
+			"",
+			"name",
+			{
+				type: "string",
+				read: true,
+				write: true,
+				role: "name",
+				name: "Name of Playstation",
+			},
+			true,
+		);
 
 		this.log.debug("created Name-State: " + JSON.stringify(nameState));
 
-		const addressState = await this.createStateAsync(id, "", "address", {
-			type: "string",
-			read: true,
-			write: true,
-			role: "address",
-			name: "IP address of Playstation",
-		}, true);
+		const addressState = await this.createState(
+			id,
+			"",
+			"address",
+			{
+				type: "string",
+				read: true,
+				write: true,
+				role: "address",
+				name: "IP address of Playstation",
+			},
+			true,
+		);
 
 		this.log.debug("created Address-State: " + JSON.stringify(addressState));
 
-		await this.setStateAsync(id + ".name", name, true);
+		await this.setState(id + ".name", name, true);
 
-		await this.setStateAsync(id + ".address", ip, true);
+		await this.setState(id + ".address", ip, true);
 		return obj;
 	}
 
@@ -307,7 +325,7 @@ class SonyPlaystation extends utils.Adapter {
 						(element: any) => {
 							this.log.debug(`PS4-Device: ${JSON.stringify(element)}`);
 							const id = device.ip.replace(/[.\s]+/g, "_");
-							this.setStateAsync(id + ".state", element["status"], true);
+							this.setState(id + ".state", element["status"], true);
 						},
 						(error: Error) => {
 							this.log.warn(`Could not poll API: ${this.errorToText(error)}`);
