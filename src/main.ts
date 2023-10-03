@@ -7,7 +7,7 @@
 import * as utils from "@iobroker/adapter-core";
 import { throws } from "assert";
 
-const ps4waker = require('ps4-waker');
+const ps4waker = require("ps4-waker");
 
 interface PlaystationDevice {
 	name: string;
@@ -15,9 +15,8 @@ interface PlaystationDevice {
 }
 
 class SonyPlaystation extends utils.Adapter {
-
 	private pollAPITimer: NodeJS.Timeout | undefined;
-    private readonly pollAPIInterval: number;
+	private readonly pollAPIInterval: number;
 
 	public constructor(options: Partial<utils.AdapterOptions> = {}) {
 		super({
@@ -63,11 +62,6 @@ class SonyPlaystation extends utils.Adapter {
 	 */
 	private onUnload(callback: () => void): void {
 		try {
-			// Here you must clear all timeouts or intervals that may still be active
-			// clearTimeout(timeout1);
-			// clearTimeout(timeout2);
-			// ...
-			// clearInterval(interval1);
 			this.log.info("Shutting down Sony Playstation adapter");
 			callback();
 		} catch (e) {
@@ -109,9 +103,9 @@ class SonyPlaystation extends utils.Adapter {
 	 * Using this method requires "common.messagebox" property to be set to true in io-package.json
 	 */
 	private onMessage(obj: ioBroker.Message): void {
-		this.log.info("onMessage called with: "+obj.command);
+		this.log.info("onMessage called with: " + obj.command);
 		let wait = false;
-	
+
 		switch (obj.command) {
 			case "send":
 				// e.g. send email or pushover or whatever
@@ -121,85 +115,90 @@ class SonyPlaystation extends utils.Adapter {
 				if (obj.callback) this.sendTo(obj.from, obj.command, "Message received", obj.callback);
 
 				break;
-			
+
 			case "browse":
 				this.log.info("case 'browse' as command");
-				this.browse(res => obj.callback && this.sendTo(obj.from, obj.command, res, obj.callback));
+				this.browse((res) => obj.callback && this.sendTo(obj.from, obj.command, res, obj.callback));
 				wait = true;
 				break;
-			
+
 			default:
-				this.log.warn('Unknown command: ' + obj.command);
+				this.log.warn("Unknown command: " + obj.command);
 				break;
 		}
-		
+
 		if (!wait && obj.callback) {
-            this.sendTo(obj.from, obj.command, obj.message, obj.callback);
-        }
+			this.sendTo(obj.from, obj.command, obj.message, obj.callback);
+		}
 	}
 
 	private async syncConfig() {
 		this.log.debug("sync State");
 		const devices = await this.getDevicesAsync();
 
-		let configDevices:PlaystationDevice[] = this.config.devices;
-		
-		this.log.debug("retrieved devices: "+JSON.stringify(devices));
-		this.log.debug("configured devices: "+JSON.stringify(configDevices));
+		let configDevices: PlaystationDevice[] = this.config.devices;
+
+		this.log.debug("retrieved devices: " + JSON.stringify(devices));
+		this.log.debug("configured devices: " + JSON.stringify(configDevices));
 
 		if (devices && devices.length) {
 			let missingDevices = [];
 			let toRemoveDevices = [];
 			for (let d = 0; d < devices.length; d++) {
-				this.log.debug("Device to check: "+ JSON.stringify(devices[d]));
+				this.log.debug("Device to check: " + JSON.stringify(devices[d]));
 				let states = await this.getStatesOfAsync(devices[d]._id);
-				this.log.debug("States: "+JSON.stringify(states));
+				this.log.debug("States: " + JSON.stringify(states));
 				for (let s = 0; s < states.length; s++) {
-					this.log.debug("State: "+JSON.stringify(states[s]));
+					this.log.debug("State: " + JSON.stringify(states[s]));
 					if (states[s].common.role === "address") {
 						this.log.debug("Verifying if the found device with the same address also exists in config");
-						let state = await this.getStateAsync( states[s]._id);
+						let state = await this.getStateAsync(states[s]._id);
 						if (!state) {
-							this.log.warn("No State found for given State Obj: "+JSON.stringify(states[s]));
+							this.log.warn("No State found for given State Obj: " + JSON.stringify(states[s]));
 							continue;
 						}
 						let foundExisting = false;
-						for (let c = 0; c < this.config.devices.length; c++ ) {
-							this.log.debug("Config IP: "+this.config.devices[c].ip+ " Device-State IP: "+state.val);
+						for (let c = 0; c < this.config.devices.length; c++) {
+							this.log.debug(
+								"Config IP: " + this.config.devices[c].ip + " Device-State IP: " + state.val,
+							);
 							if (this.config.devices[c].ip === state.val) {
-								this.log.debug("Found Device with IP: "+this.config.devices[c].ip);
+								this.log.debug("Found Device with IP: " + this.config.devices[c].ip);
 								foundExisting = true;
 								continue;
-							} 
-							this.log.debug("Found missing Device with IP address: "+this.config.devices[c].ip);
+							}
+							this.log.debug("Found missing Device with IP address: " + this.config.devices[c].ip);
 							missingDevices.push(this.config.devices[c]);
 						}
-						if(!foundExisting) {
-							this.log.debug("No config found for Device: "+ JSON.stringify(devices[d]));
+						if (!foundExisting) {
+							this.log.debug("No config found for Device: " + JSON.stringify(devices[d]));
 							toRemoveDevices.push(devices[d]);
 						}
 					}
 				}
 
-				this.log.debug("Devices to be removed: "+toRemoveDevices.length);
-				this.log.debug("Devices to be added: "+missingDevices.length);
+				this.log.debug("Devices to be removed: " + toRemoveDevices.length);
+				this.log.debug("Devices to be added: " + missingDevices.length);
 
-				toRemoveDevices.forEach(device => {
-					this.log.debug("remove Device, as it doesn't exist in Config: "+JSON.stringify(device))
+				toRemoveDevices.forEach((device) => {
+					this.log.debug("remove Device, as it doesn't exist in Config: " + JSON.stringify(device));
 					this.deleteDeviceAsync(device._id);
 				});
 
-				missingDevices.forEach(device => {
-					this.log.debug("adding Device as found in config, but missing in devices: "+JSON.stringify(device));
+				missingDevices.forEach((device) => {
+					this.log.debug(
+						"adding Device as found in config, but missing in devices: " + JSON.stringify(device),
+					);
 					this.createDeviceChannel(device.name, device.ip);
 				});
 			}
-			
 		} else {
 			this.log.debug("only new config found, adding those");
 			for (let r = 0; r < this.config.devices.length; r++) {
 				if (!this.config.devices[r].ip) {
-					this.log.debug("Following device is missing an IP-Address: "+JSON.stringify(this.config.devices[r]));
+					this.log.debug(
+						"Following device is missing an IP-Address: " + JSON.stringify(this.config.devices[r]),
+					);
 					continue;
 				}
 				this.log.debug("adding channel");
@@ -210,46 +209,45 @@ class SonyPlaystation extends utils.Adapter {
 	}
 
 	private async createDeviceChannel(name: any, ip: any) {
-		this.log.debug("Create Device Channel with Name: "+name+" and IP: "+ip);
-		const id = ip.replace(/[.\s]+/g, '_');
+		this.log.debug("Create Device Channel with Name: " + name + " and IP: " + ip);
+		const id = ip.replace(/[.\s]+/g, "_");
 		const statesList: string[] = [];
-		
+
 		const obj = await this.createDeviceAsync(id);
 
-		this.log.debug("Created Channel Obj: "+JSON.stringify(obj));
+		this.log.debug("Created Channel Obj: " + JSON.stringify(obj));
 
-		await this.createStateAsync(id, '', 'state', { 
-            type:   'string',
-            read:   true,
-            write:  true,
-            role:   'state',
-            name:   'Power Status Active'
-        });
-
-		let nameState = await this.createStateAsync(id, '', 'name', {
-			type:   'string',
-            read:   true,
-            write:  true,
-            role:   'name',
-            name:   'Name of Playstation'
+		await this.createStateAsync(id, "", "state", {
+			type: "string",
+			read: true,
+			write: true,
+			role: "state",
+			name: "Power Status Active",
 		});
 
-		this.log.debug("created Name-State: "+JSON.stringify(nameState));
-
-		let addressState = await this.createStateAsync(id, '', 'address', {
-			type:   'string',
-            read:   true,
-            write:  true,
-            role:   'address',
-            name:   'IP address of Playstation'
+		let nameState = await this.createStateAsync(id, "", "name", {
+			type: "string",
+			read: true,
+			write: true,
+			role: "name",
+			name: "Name of Playstation",
 		});
 
-		this.log.debug("created Adress-State: "+JSON.stringify(addressState));
+		this.log.debug("created Name-State: " + JSON.stringify(nameState));
 
-		await this.setStateAsync(id+".name", name);
+		let addressState = await this.createStateAsync(id, "", "address", {
+			type: "string",
+			read: true,
+			write: true,
+			role: "address",
+			name: "IP address of Playstation",
+		});
 
-		await this.setStateAsync(id+".address", ip);
+		this.log.debug("created Adress-State: " + JSON.stringify(addressState));
 
+		await this.setStateAsync(id + ".name", name);
+
+		await this.setStateAsync(id + ".address", ip);
 
 		/* await this.setObjectNotExistsAsync(id, {
 			type: "state",
@@ -262,105 +260,101 @@ class SonyPlaystation extends utils.Adapter {
 			},
 			native: {},
 		}); */
-		
+
 		return obj;
 	}
 
 	private browse(callback: (res: any[]) => void) {
-
 		this.log.info("Browse function called");
 
 		var deviceOptions = new Map();
 		//deviceOptions.set("debug","true");
 		deviceOptions.set("timeout", this.config.searchTimeOut);
-	
-		this.log.debug("Calling detector with options: "+deviceOptions);
+
+		this.log.debug("Calling detector with options: " + deviceOptions);
 
 		var detector = new ps4waker.Detector();
 
-		//discovery is a promise ... 
-		var discovery = ps4waker.Detector.findAny(deviceOptions, (err:any, device:any, rinfo:any) => {
-
+		//discovery is a promise ...
+		var discovery = ps4waker.Detector.findAny(deviceOptions, (err: any, device: any, rinfo: any) => {
 			if (err === undefined) {
 				this.log.error(err.message);
 				callback(err);
 			} else {
-				this.log.debug("discovered: "+JSON.stringify(device, null, 2));
-				
+				this.log.debug("discovered: " + JSON.stringify(device, null, 2));
+
 				//let obj = JSON.parse(device);
 
 				//this.log.debug("as obj: "+ obj);
-				this.log.debug("Name: "+device['host-name']);
-				this.log.debug("address: " + device['address']);
+				this.log.debug("Name: " + device["host-name"]);
+				this.log.debug("address: " + device["address"]);
 
 				let result = [];
 				if (device) {
-					var x = {ip:device['address']===undefined ? '' : device['address'], name:device['host-name']};
-					this.log.debug("adding to result: "+x);
-					result.push(x)
+					var x = { ip: device["address"] === undefined ? "" : device["address"], name: device["host-name"] };
+					this.log.debug("adding to result: " + x);
+					result.push(x);
 				}
-				
+
 				this.log.info("calling callback");
 				callback && callback(result);
 			}
-
-			
-			
 		});
 	}
-	
+
 	/**
-     * Poll states from API and syncs them to ioBroker states
-     */
-	 private async pollAPI(): Promise<void> {
+	 * Poll states from API and syncs them to ioBroker states
+	 */
+	private async pollAPI(): Promise<void> {
 		this.log.info("Poll PS4 state");
 
-		this.config.devices.forEach(device => {
+		this.config.devices.forEach((device) => {
 			try {
 				let deviceOptions = {
-					"debug":true,
-					"timeout":parseInt(this.config.searchTimeOut)*1000,
-					"address":device.ip,
+					debug: true,
+					timeout: parseInt(this.config.searchTimeOut) * 1000,
+					address: device.ip,
 				};
-				this.log.debug("Device Options: "+JSON.stringify(deviceOptions));
+				this.log.debug("Device Options: " + JSON.stringify(deviceOptions));
 				let ps4Device = new ps4waker.Device(deviceOptions);
-				this.log.debug("retrieving device status for device with IP: "+device.ip);
+				this.log.debug("retrieving device status for device with IP: " + device.ip);
 
-				ps4Device.getDeviceStatus().then((element:any) => {
-					this.log.debug(`PS4-Device: ${JSON.stringify(element)}`);
-					const id = device.ip.replace(/[.\s]+/g, '_');
-					this.setStateAsync(id+".state", element["status"]);
-				}, 
-				(error:Error) => {
-					this.log.warn(`Could not poll API: ${this.errorToText(error)}`);
-				}).then(() => ps4Device.close());
-
+				ps4Device
+					.getDeviceStatus()
+					.then(
+						(element: any) => {
+							this.log.debug(`PS4-Device: ${JSON.stringify(element)}`);
+							const id = device.ip.replace(/[.\s]+/g, "_");
+							this.setStateAsync(id + ".state", element["status"]);
+						},
+						(error: Error) => {
+							this.log.warn(`Could not poll API: ${this.errorToText(error)}`);
+						},
+					)
+					.then(() => ps4Device.close());
 			} catch (e) {
 				this.log.warn(`Could not poll API: ${this.errorToText(e)}`);
 			}
 		});
 
-		
-
-        this.pollAPITimer = setTimeout(() => {
-            this.pollAPI();
-        }, this.pollAPIInterval);
-    }
+		this.pollAPITimer = setTimeout(() => {
+			this.pollAPI();
+		}, this.pollAPIInterval);
+	}
 
 	/**
-     * Checks if a real error was thrown and returns message then, else it stringifies
-     *
-     * @param error any kind of thrown error
-     */
+	 * Checks if a real error was thrown and returns message then, else it stringifies
+	 *
+	 * @param error any kind of thrown error
+	 */
 	private errorToText(error: unknown): string {
 		if (error instanceof Error) {
 			return error.message;
 		} else {
 			return JSON.stringify(error);
 		}
-	}	
+	}
 }
-
 
 if (require.main !== module) {
 	// Export the constructor in compact mode
