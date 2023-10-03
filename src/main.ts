@@ -307,7 +307,7 @@ class SonyPlaystation extends utils.Adapter {
 						(element: any) => {
 							this.log.debug(`PS4-Device: ${JSON.stringify(element)}`);
 							const id = device.ip.replace(/[.\s]+/g, "_");
-							this.setStateAsync(id + ".state", element["status"]);
+							this.setStateAsync(id + ".state", element["status"], true);
 						},
 						(error: Error) => {
 							this.log.warn(`Could not poll API: ${this.errorToText(error)}`);
