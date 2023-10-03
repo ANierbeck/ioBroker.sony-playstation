@@ -1,19 +1,11 @@
 {
 	"common": {
 		"name": "sony-playstation",
-		"version": "0.0.2",
+		"version": "0.0.3",
 		"news": {
-			"0.0.2": {
-				"en": "initial release",
-				"de": "Erstveröffentlichung",
-				"ru": "Начальная версия",
-				"pt": "lançamento inicial",
-				"nl": "Eerste uitgave",
-				"fr": "Première version",
-				"it": "Versione iniziale",
-				"es": "Versión inicial",
-				"pl": "Pierwsze wydanie",
-				"zh-cn": "首次出版"
+			"0.0.3": {
+				"en": "values are acknowledged",
+				"de": "Werte werde als 'acknowledged'"
 			}
 		},
 		"title": "sony-playstation",

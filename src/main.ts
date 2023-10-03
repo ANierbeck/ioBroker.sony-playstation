@@ -221,7 +221,7 @@ class SonyPlaystation extends utils.Adapter {
 			write: true,
 			role: "state",
 			name: "Power Status Active",
-		});
+		}, true);
 
 		const nameState = await this.createStateAsync(id, "", "name", {
 			type: "string",
@@ -229,7 +229,7 @@ class SonyPlaystation extends utils.Adapter {
 			write: true,
 			role: "name",
 			name: "Name of Playstation",
-		});
+		}, true);
 
 		this.log.debug("created Name-State: " + JSON.stringify(nameState));
 
@@ -239,13 +239,13 @@ class SonyPlaystation extends utils.Adapter {
 			write: true,
 			role: "address",
 			name: "IP address of Playstation",
-		});
+		}, true);
 
 		this.log.debug("created Address-State: " + JSON.stringify(addressState));
 
-		await this.setStateAsync(id + ".name", name);
+		await this.setStateAsync(id + ".name", name, true);
 
-		await this.setStateAsync(id + ".address", ip);
+		await this.setStateAsync(id + ".address", ip, true);
 		return obj;
 	}
 
