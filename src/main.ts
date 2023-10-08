@@ -27,9 +27,6 @@ class SonyPlaystation extends utils.Adapter {
 		this.pollAPIInterval = 60000;
 
 		this.on("ready", this.onReady.bind(this));
-		this.on("stateChange", this.onStateChange.bind(this));
-		this.on("objectChange", this.onObjectChange.bind(this));
-		this.on("message", this.onMessage.bind(this));
 		this.on("unload", this.onUnload.bind(this));
 	}
 
@@ -65,69 +62,6 @@ class SonyPlaystation extends utils.Adapter {
 			callback();
 		} catch (e) {
 			callback();
-		}
-	}
-
-	// If you need to react to object changes, uncomment the following block and the corresponding line in the constructor.
-	// You also need to subscribe to the objects with `this.subscribeObjects`, similar to `this.subscribeStates`.
-	/**
-	 * Is called if a subscribed object changes
-	 */
-	private onObjectChange(id: string, obj: ioBroker.Object | null | undefined): void {
-		if (obj) {
-			// The object was changed
-			this.log.info(`object ${id} changed: ${JSON.stringify(obj)}`);
-		} else {
-			// The object was deleted
-			this.log.info(`object ${id} deleted`);
-		}
-	}
-
-	/**
-	 * Is called if a subscribed state changes
-	 */
-	private onStateChange(id: string, state: ioBroker.State | null | undefined): void {
-		if (state) {
-			// The state was changed
-			this.log.info(`state ${id} changed: ${state.val} (ack = ${state.ack})`);
-		} else {
-			// The state was deleted
-			this.log.info(`state ${id} deleted`);
-		}
-	}
-
-	//If you need to accept messages in your adapter, uncomment the following block and the corresponding line in the constructor.
-	/**
-	 * Some message was sent to this instance over message box. Used by email, pushover, text2speech, ...
-	 * Using this method requires "common.messagebox" property to be set to true in io-package.json
-	 */
-	private onMessage(obj: ioBroker.Message): void {
-		this.log.info("onMessage called with: " + obj.command);
-		let wait = false;
-
-		switch (obj.command) {
-			case "send":
-				// e.g. send email or pushover or whatever
-				this.log.info("send command");
-
-				// Send response in callback if required
-				if (obj.callback) this.sendTo(obj.from, obj.command, "Message received", obj.callback);
-
-				break;
-
-			case "browse":
-				this.log.info("case 'browse' as command");
-				this.browse((res) => obj.callback && this.sendTo(obj.from, obj.command, res, obj.callback));
-				wait = true;
-				break;
-
-			default:
-				this.log.warn("Unknown command: " + obj.command);
-				break;
-		}
-
-		if (!wait && obj.callback) {
-			this.sendTo(obj.from, obj.command, obj.message, obj.callback);
 		}
 	}
 
