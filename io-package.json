@@ -1,10 +1,10 @@
 {
 	"common": {
 		"name": "sony-playstation",
-		"version": "0.0.4",
+		"version": "0.0.5",
 		"news": {
-			"0.0.4": {
-				"en": "switched to non async functions for state change"
+			"0.0.5": {
+				"en": "removed non functional functions from code"
 			}
 		},
 		"title": "sony-playstation",

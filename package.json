@@ -1,6 +1,6 @@
 {
   "name": "iobroker.sony-playstation",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "shows status of playstation in the same network",
   "author": {
     "name": "Achim Nierbeck",
